@@ -1,0 +1,5 @@
+//query for inserting admin
+INSERT INTO "Admin" ("username", "email", "password", "role") 
+VALUES ('admin1', 'admin20000@gmail.com', 'admin123', 'admin');
+
+//username=admin1 password=admin123
