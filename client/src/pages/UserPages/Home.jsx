@@ -23,23 +23,28 @@ const Home = ({ role }) => {
 
     const addRequest = async (id) => {
         try {
-            const response = await axios.post('/api/user/bookRequest', {
-                bookId: parseInt(id),
-                userId: parseInt(localStorage.getItem('userId'))
+            const response=await axios.post("/api/user/bookRequest", {
+                bookId:parseInt(id),
+                userId:parseInt(localStorage.getItem('userId'))
             }, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type':'application/json'
                 }
             });
-            console.log(response.data)
-            // if (response.data === "Book Already Requested") {
-            //     alert("Book Already Requested");
-            // } else {
-            //     console.log(response.data);
-            //     alert("Book requested successfully")
-            // }
+            if(response.status===200) {
+                alert("Book Requested Succesfully");
+            }
+            else {
+                alert("Unexpected response");
+            }
         } catch (error) {
-            console.error("Error requesting book:", error);
+            if(error.response && error.response.status===400) {
+                alert("Book Already Requested");
+            }
+            else {
+                console.error("Error requesting book: ",error);
+                alert("Failed to request book.Please try again later");
+            }
         }
     }
 

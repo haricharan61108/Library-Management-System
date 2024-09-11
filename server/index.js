@@ -178,16 +178,17 @@ app.post("/api/user/bookRequest/", async (req, res) => {
         console.log("Book ID:", bookId);
         console.log("User ID:", userId);
 
-        // const requestCheck = await prisma.borrowRequest.findFirst({
-        //     where: {
-        //         userId: userId,
-        //         bookId: bookId
-        //     }
-        // })
+        const requestCheck = await prisma.borrowRequest.findFirst({
+            where: {
+                user_id: userId,
+                book_id: bookId,
+                status:"pending",
+            }
+        })
 
-        // if (requestCheck) {
-        //     return res.status(400).json({ error: "Book Already Requested" });
-        // }
+        if (requestCheck) {
+            return res.status(400).json({ error: "Book Already Requested" });
+        }
 
         const bookRequest = await prisma.borrowRequest.create({
             data: {
