@@ -320,6 +320,34 @@ app.post("/api/admin/rejectRequest",async(req,res)=> {
         res.status(500).json({error:"Failed to reject request"});
     }
 })
+
+//route for getting user details and showing it in profile section
+
+app.get("/api/user/:userId",async(req,res)=> {
+    try {
+        const userId=parseInt(req.params.userId,10);
+        const user=await prisma.user.findUnique({
+            where: {
+                user_id:userId,
+            },
+            include: {
+                BorrowedBooks: {
+                    include: {
+                        Book:true,
+                    },
+                },
+            },
+        });
+        if(!user) {
+            return res.status(404).json({error:"User not found"});
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error(`Failed to fetch user details: ${error}`);
+        res.status(500).json({ error: "Failed to fetch user details" });
+    }
+})
 app.listen(PORT, () => {
     console.log(`server is running on PORT ${PORT}`);
 })

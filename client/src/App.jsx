@@ -5,6 +5,7 @@ import MyCollection from './pages/UserPages/MyCollection'
 import { useState, useEffect } from 'react'
 import AddBook from './pages/AdminPages/AddBook'
 import PendingRequests from './pages/AdminPages/PendingRequests'
+import Profile from './pages/UserPages/Profile'
 
 function App() {
   const [role, setRole] = useState(() => {
@@ -27,6 +28,7 @@ function App() {
           <Route path='/admin/home' element={<Home role={role} />} />
           <Route path='/admin/addBook' element={<AddBook/>} />
           <Route path='/admin/pending' element={<PendingRequests role={role}/>} />
+          <Route path='/user/profile' element={<Profile></Profile>} />
         </Routes>
       </BrowserRouter>
     </>
