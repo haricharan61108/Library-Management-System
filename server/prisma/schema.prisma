@@ -10,14 +10,15 @@ datasource db {
 }
 
 model Book {
-  book_id         Int             @id @default(autoincrement())
-  title           String
-  author          String
+  book_id          Int             @id @default(autoincrement())
+  title            String
+  author           String
   copies_available Int
-  total_copies    Int
-  added_date      DateTime
-  BorrowRequests  BorrowRequest[]
-  BorrowedBooks   BorrowedBook[]
+  total_copies     Int
+  added_date       DateTime
+  BorrowRequests   BorrowRequest[]
+  BorrowedBooks    BorrowedBook[]
+  Fine             Fine[]
 }
 
 model Admin {
@@ -38,40 +39,41 @@ model User {
   Profile           UserProfile?
   BorrowRequests    BorrowRequest[]
   BorrowedBooks     BorrowedBook[]
-  Fines             Fine[]
+  Fine              Fine[]
 }
 
 model Fine {
-  fine_id      Int           @id @default(autoincrement())
-  user_id      Int
-  borrow_id    Int
-  fine_amount  Decimal        @db.Decimal(10,2)
-  paid_status  Boolean
-  User         User           @relation(fields: [user_id], references: [user_id])
-  BorrowedBook BorrowedBook   @relation(fields: [borrow_id], references: [borrow_id])
+  id           Int       @id @default(autoincrement())
+  userId       Int
+  bookId       Int
+  borrow_date  DateTime
+  return_date  DateTime
+  fine         Float
+  Book         Book      @relation(fields: [bookId], references: [book_id])
+  User         User      @relation(fields: [userId], references: [user_id])
 }
 
 model BorrowRequest {
-  request_id   Int    @id @default(autoincrement())
-  user_id      Int
-  book_id      Int
-  request_date DateTime
-  status       String
-  User         User   @relation(fields: [user_id], references: [user_id])
-  Book         Book   @relation(fields: [book_id], references: [book_id])
+  request_id    Int     @id @default(autoincrement())
+  user_id       Int
+  book_id       Int
+  request_date  DateTime
+  status        String
+  User          User    @relation(fields: [user_id], references: [user_id])
+  Book          Book    @relation(fields: [book_id], references: [book_id])
 }
 
 model UserProfile {
-  profile_id      Int     @id @default(autoincrement())
-  user_id         Int     @unique
+  profile_id      Int      @id @default(autoincrement())
+  user_id         Int      @unique
   profile_picture String?
   bio             String?
   contact_number  String?
-  User            User    @relation(fields: [user_id], references: [user_id])
+  User            User     @relation(fields: [user_id], references: [user_id])
 }
 
 model BorrowedBook {
-  borrow_id   Int       @id @default(autoincrement())
+  borrowId    Int       @id @default(autoincrement())
   user_id     Int
   book_id     Int
   borrow_date DateTime
@@ -80,5 +82,4 @@ model BorrowedBook {
   fine        Decimal?  @db.Decimal(10,2)
   User        User      @relation(fields: [user_id], references: [user_id])
   Book        Book      @relation(fields: [book_id], references: [book_id])
-  Fines       Fine[]
 }

@@ -18,7 +18,6 @@ const Navbar = ({ role }) => {
                     ) : (
                         <>
                             <button onClick={() => { navigate('/user/home') }} className="mx-2 hover:bg-gray-600 px-4 py-2 rounded">Home</button>
-                            <button onClick={() => { navigate('/user/fine') }} className="mx-2 hover:bg-gray-600 px-4 py-2 rounded">Fines</button>
                             <button onClick={() => { navigate('/user/collection') }} className="mx-2 hover:bg-gray-600 px-4 py-2 rounded">My Collection</button>
                             <button onClick={() => { navigate('/user/profile') }} className="mx-2 bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded">Profile</button>
                         </>

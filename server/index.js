@@ -348,6 +348,80 @@ app.get("/api/user/:userId",async(req,res)=> {
         res.status(500).json({ error: "Failed to fetch user details" });
     }
 })
+
+//route for returning book
+app.post("/api/user/return/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const bookId = parseInt(id);
+
+        if (isNaN(bookId)) {
+            return res.status(400).send("Invalid book ID");
+        }
+
+        // Find the borrowed book by the borrowId, which matches your Prisma model
+        const borrowedBook = await prisma.borrowedBook.findUnique({
+            where: {
+                borrowId: bookId  // Ensure this matches your model schema
+            }
+        });
+
+        if (!borrowedBook) {
+            return res.status(404).send("Book Not Found");
+        }
+
+        const dueDate = new Date(borrowedBook.due_date);
+        const returnDate = new Date();
+        let fine = 0;
+
+        // Calculate fine if the book is returned late
+        if (returnDate > dueDate) {
+            const daysLate = Math.ceil((returnDate - dueDate) / (1000 * 60 * 60 * 24));
+            fine = daysLate * 10;  // Assume $10 fine per day
+        }
+
+        // Delete the borrowed book entry to mark it as returned
+        await prisma.borrowedBook.delete({
+            where: {
+                borrowId: bookId  // Ensure this matches your model schema
+            }
+        });
+
+        // Create a fine record if necessary
+        await prisma.fine.create({
+            data: {
+                userId: borrowedBook.user_id,
+                bookId: borrowedBook.book_id,
+                borrow_date: borrowedBook.borrow_date,
+                return_date: returnDate,
+                fine: fine
+            }
+        });
+
+        res.status(200).send("Book returned successfully");
+    } catch (error) {
+        console.error(`Error returning book: ${error}`);
+        res.status(500).send("Internal server error");
+    }
+});  
+
+//route for fetching all the fines of a user
+app.get("/api/user/fines/:userId", async (req, res) => {
+    const { userId } = req.params;
+    try {
+      const fines = await prisma.fine.findMany({
+        where: { userId: parseInt(userId) },
+        include: {
+         Book:true,
+         User:true, 
+        },
+      });
+      res.status(200).json(fines);
+    } catch (error) {
+      console.error(`Error fetching fines: ${error}`);
+      res.status(500).send("Internal server error");
+    }
+  });
 app.listen(PORT, () => {
     console.log(`server is running on PORT ${PORT}`);
 })
