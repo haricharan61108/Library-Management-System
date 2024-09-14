@@ -359,10 +359,9 @@ app.post("/api/user/return/:id", async (req, res) => {
             return res.status(400).send("Invalid book ID");
         }
 
-        // Find the borrowed book by the borrowId, which matches your Prisma model
         const borrowedBook = await prisma.borrowedBook.findUnique({
             where: {
-                borrowId: bookId  // Ensure this matches your model schema
+                borrowId: bookId  
             }
         });
 
@@ -374,20 +373,17 @@ app.post("/api/user/return/:id", async (req, res) => {
         const returnDate = new Date();
         let fine = 0;
 
-        // Calculate fine if the book is returned late
         if (returnDate > dueDate) {
             const daysLate = Math.ceil((returnDate - dueDate) / (1000 * 60 * 60 * 24));
-            fine = daysLate * 10;  // Assume $10 fine per day
+            fine = daysLate * 10;  
         }
 
-        // Delete the borrowed book entry to mark it as returned
         await prisma.borrowedBook.delete({
             where: {
-                borrowId: bookId  // Ensure this matches your model schema
+                borrowId: bookId  
             }
         });
 
-        // Create a fine record if necessary
         await prisma.fine.create({
             data: {
                 userId: borrowedBook.user_id,
